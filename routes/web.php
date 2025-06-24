@@ -26,8 +26,8 @@ Route::middleware('throttle:60,1')->group(function () {
     Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
     Route::get('/', function () {
-        return redirect()->route('denuncias.index');
-    });
+        return view('welcome');
+    })->name('home');
 
     // Rotas protegidas
     Route::middleware(['auth'])->group(function () {
