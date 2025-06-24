@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('perfis', function (Blueprint $table) {
-            $table->id('PerfilID', 10, true);
-            $table->string('NomePerfil', 100)->unique();
-            $table->text('Descricao')->nullable();
+            $table->bigIncrements('PerfilID');
+            $table->string('Nome', 50);
+            $table->text('Permissoes')->nullable();
+            $table->timestamps();
         });
     }
 

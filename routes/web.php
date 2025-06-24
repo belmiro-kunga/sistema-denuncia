@@ -19,17 +19,24 @@ use App\Http\Controllers\PessoaEnvolvidaCasoController;
 
 // Rate limiting
 Route::middleware('throttle:60,1')->group(function () {
+    // Rotas de autenticação
+    Route::get('/login', function () {
+        return view('auth.login');
+    })->name('login');
+
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
     Route::get('/', function () {
-        return view('welcome');
+        return redirect()->route('denuncias.index');
     });
 
     // Rotas protegidas
     Route::middleware(['auth'])->group(function () {
-        Route::get('/dashboard', [DenunciaController::class, 'index'])->name('dashboard');
-        Route::post('/denuncias', [DenunciaController::class, 'store'])->name('denuncias.store');
+        // Rotas de denúncias
+        Route::get('/denuncias', [DenunciaController::class, 'index'])->name('denuncias.index');
         Route::get('/denuncias/{id}', [DenunciaController::class, 'show'])->name('denuncias.show');
-        Route::get('/denuncias', [DenunciaController::class, 'index']);
-        Route::post('/denuncias', [DenunciaController::class, 'store']);
+        Route::post('/denuncias', [DenunciaController::class, 'store'])->name('denuncias.store');
         Route::put('/denuncias/{id}', [DenunciaController::class, 'update']);
         Route::delete('/denuncias/{id}', [DenunciaController::class, 'destroy']);
         Route::get('/casos', [CasoController::class, 'index']);
@@ -100,4 +107,11 @@ Route::middleware('throttle:60,1')->group(function () {
         Route::put('/pessoas-envolvidas/{id}', [PessoaEnvolvidaCasoController::class, 'update']);
         Route::delete('/pessoas-envolvidas/{id}', [PessoaEnvolvidaCasoController::class, 'destroy']);
     });
+
+    // Rotas públicas
+    Route::get('/categorias', [CategoriaDenunciaController::class, 'index']);
+    Route::post('/denuncias', [DenunciaController::class, 'store'])->name('denuncias.store');
+    Route::get('/login', function () {
+        return view('auth.login');
+    })->name('login');
 });

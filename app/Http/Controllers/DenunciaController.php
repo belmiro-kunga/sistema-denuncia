@@ -18,17 +18,52 @@ class DenunciaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'Titulo' => 'required|string|max:255',
-            'Descricao' => 'required|string',
-            'UsuarioID' => 'required|integer|exists:usuarios,UsuarioID',
-            'CategoriaID' => 'required|integer|exists:categoriasdenuncia,CategoriaID',
-            'DenuncianteID' => 'required|integer|exists:denunciantes,DenuncianteID',
-            'DataHoraDenuncia' => 'required|date',
-            'NivelRiscoInicial' => 'required|integer',
+            'categoria_id' => 'required|integer|exists:categoriasdenuncia,CategoriaID',
+            'descricao' => 'required|string',
+            'anonima' => 'nullable|boolean',
+            'nome_denunciante' => 'nullable|string|max:100',
+            'email_denunciante' => 'nullable|email|max:100',
+            'anexos.*' => 'file|max:5120|mimes:jpg,jpeg,png,pdf'
         ]);
 
-        $denuncia = Denuncia::create($validated);
-        return response()->json($denuncia, 201);
+        // Se não for anônima, cria ou busca denunciante
+        $denuncianteId = null;
+        if (empty($validated['anonima']) && ($validated['nome_denunciante'] || $validated['email_denunciante'])) {
+            $denunciante = \App\Models\Denunciante::firstOrCreate(
+                [
+                    'Email' => $validated['email_denunciante'] ?? null,
+                    'Nome' => $validated['nome_denunciante'] ?? null,
+                ]
+            );
+            $denuncianteId = $denunciante->DenuncianteID;
+        }
+
+        // Cria a denúncia
+        $denuncia = \App\Models\Denuncia::create([
+            'CategoriaID' => $validated['categoria_id'],
+            'Descricao' => $validated['descricao'],
+            'DenuncianteID' => $denuncianteId,
+            'DataHoraDenuncia' => now(),
+            'NivelRiscoInicial' => 1, // ou outro valor padrão
+            // outros campos conforme necessário
+        ]);
+
+        // Salva os anexos, se houver
+        if ($request->hasFile('anexos')) {
+            foreach ($request->file('anexos') as $file) {
+                $path = $file->store('anexos');
+                // Relacione o anexo à denúncia, se houver model Anexo
+                \App\Models\Anexo::create([
+                    'DenunciaID' => $denuncia->DenunciaID,
+                    'NomeArquivo' => $file->getClientOriginalName(),
+                    'CaminhoArquivo' => $path,
+                    'TipoArquivo' => $file->getClientMimeType(),
+                    'TamanhoBytes' => $file->getSize(),
+                ]);
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Denúncia registrada com sucesso!']);
     }
 
     // Visualizar detalhes de uma denúncia

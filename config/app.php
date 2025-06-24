@@ -123,4 +123,15 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    // Configuração CORS temporária para desenvolvimento
+    'cors' => [
+        'paths' => ['api/*', 'login', 'logout', 'sanctum/csrf-cookie'],
+        'allowed_methods' => ['*'],
+        'allowed_origins' => ['*'],
+        'allowed_headers' => ['*'],
+        'exposed_headers' => [],
+        'max_age' => 0,
+        'supports_credentials' => false,
+    ],
+
 ];

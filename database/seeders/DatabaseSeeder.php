@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             PerfilSeeder::class,
             PermissaoSeeder::class,
             CategoriaDenunciaSeeder::class,
-            StatusCasoSeeder::class
+            StatusCasoSeeder::class,
+            UserSeeder::class
         ]);
     }
 }

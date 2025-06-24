@@ -17,7 +17,7 @@ class CreateEquipesTratamentoTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('responsavel_id')->references('id')->on('usuarios')
+            $table->foreign('responsavel_id')->references('UsuarioID')->on('usuarios')
                 ->onDelete('set null')
                 ->onUpdate('cascade');
         });
@@ -33,7 +33,7 @@ class CreateEquipesTratamentoTable extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->foreign('usuario_id')->references('id')->on('usuarios')
+            $table->foreign('usuario_id')->references('UsuarioID')->on('usuarios')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 

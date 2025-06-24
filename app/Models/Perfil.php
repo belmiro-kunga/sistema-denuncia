@@ -8,8 +8,8 @@ class Perfil extends Model
 {
     protected $table = 'perfis';
     protected $primaryKey = 'PerfilID';
-    protected $fillable = ['NomePerfil', 'Descricao'];
-    public $timestamps = false;
+    protected $fillable = ['Nome', 'Permissoes'];
+    public $timestamps = true;
 
     public function permissoes()
     {

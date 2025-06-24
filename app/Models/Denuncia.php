@@ -16,7 +16,12 @@ class Denuncia extends Model
         'DenuncianteID',
         'DataHoraDenuncia',
         'NivelRiscoInicial',
-        'PessoasEnvolvidas'
+        'PessoasEnvolvidas',
+        'categoria_id',
+        'descricao',
+        'anonima',
+        'nome_denunciante',
+        'email_denunciante'
     ];
 
     public function usuario()

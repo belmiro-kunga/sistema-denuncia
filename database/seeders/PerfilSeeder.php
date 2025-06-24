@@ -14,16 +14,19 @@ class PerfilSeeder extends Seeder
     {
         $perfis = [
             [
-                'NomePerfil' => 'Administrador',
-                'Descricao' => 'Administrador do sistema com acesso completo'
+                'Nome' => 'Administrador',
+                'Permissoes' => json_encode([
+                    'admin' => true,
+                    'gestao' => true,
+                    'denuncias' => true
+                ])
             ],
             [
-                'NomePerfil' => 'Investigador',
-                'Descricao' => 'Responsável por investigar denúncias'
-            ],
-            [
-                'NomePerfil' => 'Analista',
-                'Descricao' => 'Análise de denúncias e casos'
+                'Nome' => 'Usuário',
+                'Permissoes' => json_encode([
+                    'gestao' => false,
+                    'denuncias' => true
+                ])
             ]
         ];
 
