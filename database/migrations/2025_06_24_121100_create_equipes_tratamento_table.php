@@ -8,16 +8,16 @@ class CreateEquipesTratamentoTable extends Migration
 {
     public function up()
     {
-        Schema::create('equipestratamento', function (Blueprint $table) {
-            $table->id('EquipeID');
-            $table->string('NomeEquipe', 100);
-            $table->text('Descricao')->nullable();
-            $table->bigInteger('ResponsavelID')->unsigned()->nullable();
-            $table->boolean('Ativo')->default(true);
+        Schema::create('equipes_tratamento', function (Blueprint $table) {
+            $table->id();
+            $table->string('nome', 100);
+            $table->text('descricao')->nullable();
+            $table->unsignedBigInteger('responsavel_id')->nullable();
+            $table->boolean('ativo')->default(true);
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('ResponsavelID')->references('UsuarioID')->on('usuarios')
+            $table->foreign('responsavel_id')->references('id')->on('usuarios')
                 ->onDelete('set null')
                 ->onUpdate('cascade');
         });
@@ -25,25 +25,25 @@ class CreateEquipesTratamentoTable extends Migration
         // Tabela pivot para relacionamento muitos-para-muitos
         Schema::create('equipe_usuario', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('EquipeID')->unsigned();
-            $table->bigInteger('UsuarioID')->unsigned();
+            $table->unsignedBigInteger('equipe_id');
+            $table->unsignedBigInteger('usuario_id');
             $table->timestamps();
 
-            $table->foreign('EquipeID')->references('EquipeID')->on('equipestratamento')
+            $table->foreign('equipe_id')->references('id')->on('equipes_tratamento')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->foreign('UsuarioID')->references('UsuarioID')->on('usuarios')
+            $table->foreign('usuario_id')->references('id')->on('usuarios')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->unique(['EquipeID', 'UsuarioID']);
+            $table->unique(['equipe_id', 'usuario_id']);
         });
     }
 
     public function down()
     {
         Schema::dropIfExists('equipe_usuario');
-        Schema::dropIfExists('equipestratamento');
+        Schema::dropIfExists('equipes_tratamento');
     }
 }

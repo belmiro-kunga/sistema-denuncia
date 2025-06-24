@@ -11,6 +11,11 @@ use App\Http\Controllers\EquipeTratamentoController;
 use App\Http\Controllers\PermissaoController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\LogAuditoriaController;
+use App\Http\Controllers\AnexoController;
+use App\Http\Controllers\ConfiguracaoSistemaController;
+use App\Http\Controllers\ComunicacaoCasoController;
+use App\Http\Controllers\AtribuicaoCasoController;
+use App\Http\Controllers\PessoaEnvolvidaCasoController;
 
 // Rate limiting
 Route::middleware('throttle:60,1')->group(function () {
@@ -69,5 +74,30 @@ Route::middleware('throttle:60,1')->group(function () {
         Route::delete('/perfis/{id}', [PerfilController::class, 'destroy']);
         Route::get('/logs', [LogAuditoriaController::class, 'index']);
         Route::get('/logs/{id}', [LogAuditoriaController::class, 'show']);
+        Route::get('/anexos', [AnexoController::class, 'index']);
+        Route::post('/anexos', [AnexoController::class, 'store']);
+        Route::get('/anexos/{id}', [AnexoController::class, 'show']);
+        Route::put('/anexos/{id}', [AnexoController::class, 'update']);
+        Route::delete('/anexos/{id}', [AnexoController::class, 'destroy']);
+        Route::get('/configuracoes', [ConfiguracaoSistemaController::class, 'index']);
+        Route::post('/configuracoes', [ConfiguracaoSistemaController::class, 'store']);
+        Route::get('/configuracoes/{id}', [ConfiguracaoSistemaController::class, 'show']);
+        Route::put('/configuracoes/{id}', [ConfiguracaoSistemaController::class, 'update']);
+        Route::delete('/configuracoes/{id}', [ConfiguracaoSistemaController::class, 'destroy']);
+        Route::get('/comunicacoes', [ComunicacaoCasoController::class, 'index']);
+        Route::post('/comunicacoes', [ComunicacaoCasoController::class, 'store']);
+        Route::get('/comunicacoes/{id}', [ComunicacaoCasoController::class, 'show']);
+        Route::put('/comunicacoes/{id}', [ComunicacaoCasoController::class, 'update']);
+        Route::delete('/comunicacoes/{id}', [ComunicacaoCasoController::class, 'destroy']);
+        Route::get('/atribuicoes', [AtribuicaoCasoController::class, 'index']);
+        Route::post('/atribuicoes', [AtribuicaoCasoController::class, 'store']);
+        Route::get('/atribuicoes/{id}', [AtribuicaoCasoController::class, 'show']);
+        Route::put('/atribuicoes/{id}', [AtribuicaoCasoController::class, 'update']);
+        Route::delete('/atribuicoes/{id}', [AtribuicaoCasoController::class, 'destroy']);
+        Route::get('/pessoas-envolvidas', [PessoaEnvolvidaCasoController::class, 'index']);
+        Route::post('/pessoas-envolvidas', [PessoaEnvolvidaCasoController::class, 'store']);
+        Route::get('/pessoas-envolvidas/{id}', [PessoaEnvolvidaCasoController::class, 'show']);
+        Route::put('/pessoas-envolvidas/{id}', [PessoaEnvolvidaCasoController::class, 'update']);
+        Route::delete('/pessoas-envolvidas/{id}', [PessoaEnvolvidaCasoController::class, 'destroy']);
     });
 });

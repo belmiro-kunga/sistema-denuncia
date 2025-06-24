@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Denúncia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css">
+    <style>
+        body { max-width: 600px; margin: 40px auto; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h2>Nova Denúncia</h2>
+    <form id="complaintForm">
+        <div class="form-group">
+            <label for="categoria_id">Categoria da Denúncia:</label>
+            <select id="categoria_id" name="categoria_id" required>
+                <option value="">Selecione uma categoria</option>
+                <option value="1">Fraude</option>
+                <option value="2">Assédio Moral</option>
+                <option value="3">Assédio Sexual</option>
+                <option value="4">Discriminação</option>
+                <option value="5">Corrupção</option>
+                <option value="6">Outros</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="descricao">Descrição Detalhada:</label>
+            <textarea id="descricao" name="descricao" rows="8" placeholder="Descreva a denúncia com o máximo de detalhes possível. Inclua datas, locais, pessoas envolvidas e qualquer evidência." required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="anexos">Anexar Evidências (Opcional):</label>
+            <input type="file" id="anexos" name="anexos[]" multiple accept="image/*, application/pdf">
+            <small>Formatos aceitos: Imagens (JPG, PNG), PDF. Tamanho máximo: 5MB por arquivo.</small>
+        </div>
+        <div class="form-group checkbox-group">
+            <input type="checkbox" id="anonima" name="anonima">
+            <label for="anonima">Desejo fazer esta denúncia de forma anônima</label>
+        </div>
+        <div id="contactInfo" class="form-group">
+            <label for="nome_denunciante">Seu Nome (Opcional):</label>
+            <input type="text" id="nome_denunciante" name="nome_denunciante" placeholder="Seu nome completo">
+            <label for="email_denunciante">Seu E-mail (Opcional):</label>
+            <input type="email" id="email_denunciante" name="email_denunciante" placeholder="seu.email@exemplo.com">
+            <small>Se você fornecer seu e-mail, poderemos entrar em contato para mais detalhes ou para informar o progresso da denúncia.</small>
+        </div>
+        <button type="submit" class="btn-primary">Enviar Denúncia <i data-lucide="send"></i></button>
+    </form>
+    <div id="msg"></div>
+
+    <script>
+    // Carregar categorias dinamicamente
+    fetch('/categorias')
+      .then(res => res.json())
+      .then(data => {
+        const select = document.getElementById('categoria_id');
+        data.forEach(cat => {
+          const opt = document.createElement('option');
+          opt.value = cat.CategoriaID;
+          opt.textContent = cat.NomeCategoria;
+          select.appendChild(opt);
+        });
+      });
+
+    document.getElementById('complaintForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const msg = document.getElementById('msg');
+      msg.textContent = '';
+      msg.className = '';
+      const data = {
+        categoria_id: form.categoria_id.value,
+        descricao: form.descricao.value,
+        anexos: form.anexos.files,
+        anonima: form.anonima.checked,
+        nome_denunciante: form.nome_denunciante.value,
+        email_denunciante: form.email_denunciante.value
+      };
+      try {
+        const res = await fetch('/denuncias', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (res.ok) {
+          msg.textContent = 'Denúncia enviada com sucesso!';
+          msg.className = 'success';
+          form.reset();
+        } else {
+          msg.textContent = result.message || 'Erro ao enviar denúncia.';
+          msg.className = 'error';
+        }
+      } catch (err) {
+        msg.textContent = 'Erro de conexão.';
+        msg.className = 'error';
+      }
+    });
+    </script>
+</body>
+</html> 

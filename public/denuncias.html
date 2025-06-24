@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Denúncias</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css">
+    <style>
+        body { max-width: 900px; margin: 40px auto; }
+        table { width: 100%; }
+        th, td { text-align: left; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h2>Denúncias Registradas</h2>
+    <table id="tabelaDenuncias">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Categoria</th>
+                <th>Usuário</th>
+                <th>Denunciante</th>
+                <th>Data/Hora</th>
+                <th>Nível de Risco</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="msg"></div>
+    <script>
+    async function carregarDenuncias() {
+        const msg = document.getElementById('msg');
+        msg.textContent = '';
+        msg.className = '';
+        try {
+            const res = await fetch('/denuncias');
+            const denuncias = await res.json();
+            if (!Array.isArray(denuncias)) throw new Error('Resposta inesperada da API.');
+            const tbody = document.querySelector('#tabelaDenuncias tbody');
+            tbody.innerHTML = '';
+            denuncias.forEach(d => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${d.DenunciaID}</td>
+                    <td>${d.Titulo}</td>
+                    <td>${d.categoria ? d.categoria.NomeCategoria : '-'}</td>
+                    <td>${d.usuario ? d.usuario.NomeCompleto : '-'}</td>
+                    <td>${d.denunciante ? d.denunciante.Nome : '-'}</td>
+                    <td>${d.DataHoraDenuncia ? new Date(d.DataHoraDenuncia).toLocaleString() : '-'}</td>
+                    <td>${d.NivelRiscoInicial || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            msg.textContent = 'Erro ao carregar denúncias.';
+            msg.className = 'error';
+        }
+    }
+    carregarDenuncias();
+    </script>
+</body>
+</html> 
