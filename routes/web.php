@@ -16,16 +16,14 @@ use App\Http\Controllers\ConfiguracaoSistemaController;
 use App\Http\Controllers\ComunicacaoCasoController;
 use App\Http\Controllers\AtribuicaoCasoController;
 use App\Http\Controllers\PessoaEnvolvidaCasoController;
+use App\Http\Controllers\Admin\DashboardController;
 
 // Rate limiting
 Route::middleware('throttle:60,1')->group(function () {
     // Rotas de autenticação
-    Route::get('/login', function () {
-        return view('auth.login');
-    })->name('login');
-
-    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.submit');
+    Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
     Route::get('/', function () {
         return redirect()->route('denuncias.index');
@@ -106,6 +104,7 @@ Route::middleware('throttle:60,1')->group(function () {
         Route::get('/pessoas-envolvidas/{id}', [PessoaEnvolvidaCasoController::class, 'show']);
         Route::put('/pessoas-envolvidas/{id}', [PessoaEnvolvidaCasoController::class, 'update']);
         Route::delete('/pessoas-envolvidas/{id}', [PessoaEnvolvidaCasoController::class, 'destroy']);
+        Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     });
 
     // Rotas públicas

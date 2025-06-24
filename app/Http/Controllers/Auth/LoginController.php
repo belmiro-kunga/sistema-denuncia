@@ -10,6 +10,11 @@ use App\Models\Usuario;
 
 class LoginController extends Controller
 {
+    public function show()
+    {
+        return view('auth.login');
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -17,7 +22,17 @@ class LoginController extends Controller
             'password' => ['required', 'min:6']
         ]);
 
-        if (Auth::attempt($credentials)) {
+        $usuario = Usuario::where('Email', $credentials['email'])->first();
+        
+        if ($usuario && Hash::check($credentials['password'], $usuario->Senha)) {
+            if (!$usuario->Ativo) {
+                return back()->withErrors([
+                    'email' => 'Usuário inativo'
+                ])->onlyInput('email');
+            }
+
+            // Definir o guard antes de fazer o login
+            Auth::guard('web')->login($usuario);
             $request->session()->regenerate();
             return redirect()->intended('/denuncias');
         }
